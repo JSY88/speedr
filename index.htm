@@ -605,10 +605,14 @@
         let totalTimerMs = 0;
         let remainingTimerMs = 0;
         let textRepeatCount = 0;
+        let lastUpdateTime = 0;
+        let frameRequestId = null;
+        let targetSpeed = 200;
+        let nextScheduledTime = 0;
         let textLibrary = [
             {
                 name: '샘플 텍스트 - 빠른 읽기 소개',
-                content: '빠른 읽기 훈련에 오신 것을 환영합니다. 이 기술은 여러분의 읽기 속도와 집중력을 동시에 향상시킬 수 있는 놀라운 방법입니다. 연구에 따르면 글자를 빠르게 제시했을 때 기분이 현저히 향상되는 것으로 나타났습니다. 이는 텍스트의 내용이 긍정적이든 부정적이든 관계없이 나타나는 현상입니다. 빠른 읽기는 조증과 유사한 상태를 유도하여 주관적인 힘, 창의성, 에너지 증가를 가져다줍니다. 지금부터 이 훌륭한 훈련을 시작해보세요.'
+                content: '바다파도서핑보드나무숲곰꿀벌노란색해바라기반고흐귀소라껍데기소음조용함명상연꽃연못개구리점프트램펄린공중비행기구름솜베개잠꿈무지개색깔팔레트화가붓털고양이야옹밤올빼미지혜책종이나비변신마법지팡이나무뿌리땅지렁이비우산그림자해시계시간시계톱니바퀴기계로봇미래우주별소원유성속도경주말당근토끼귀듣기음악피아노건반흑백체스왕왕관보석다이아몬드반짝임눈겨울눈사람코당근주황색호박할로윈유령하얀색구름양털실스웨터따뜻함포옹사랑하트심장박동리듬춤발레백조호수거울반사빛프리즘삼각형피라미드이집트사막낙타혹산등반밧줄매듭선원항해나침반북극펭귄턱시도정장넥타이매듭실바늘가시장미빨간색사과과수원나무사다리높이새날개자유바람연실거미거미줄덫사냥활화살과녁정확함시계정시기차철도선로평행선수학숫자0원바퀴자전거페달발신발끈묶기선물리본나비꽃향기코코끼리기억앨범사진순간찰나번개천둥소리메아리산골짜기강흐름시간모래시계모래해변조개진주목걸이목기린높이하늘파란색바다물고기비늘반짝임은색달밤불빛촛불왁스밀랍봉인편지우체통빨간색장미가시아픔치료약쓴맛커피원두갈색초콜릿달콤함꿀벌집육각형벌윙윙소음헤드폰음악노래새지저귐아침해노란색레몬신맛찡그림표정거울유리투명함공기바람태풍회전팽이장난감어린이웃음기쁨눈물짠맛바다소금하얀색눈스키미끄러짐얼음차가움냉장고음식요리불성냥작은개미줄행진군대제복초록색잎나무그늘시원함에어컨바람선풍기날개천사하늘구름양목장풀젖소우유하얀색눈눈사람당근코냄새향수병유리깨짐조각퍼즐맞추기열쇠자물쇠문손잡이손악수만남인사모자머리생각전구아이디어발명과학자실험실험실하얀색가운의사청진기심장사랑편지우표여행여행가방바퀴굴리기공축구잔디초록색숲나무그네어린시절추억앨범책이야기상상구름모양동물사자갈기털따뜻함담요잠베개깃털새하늘무한우주별자리연결점선그림미술붓물감색깔무지개비우산보호지붕집가족식탁음식포크길갈래선택결정동전던지기확률수학계산기버튼누르기벨소리파동바다서핑균형줄타기서커스광대빨간코웃음재미놀이공원롤러코스터속도바람머리카락날리기깃발나라지구둥글음공농구높이점프개구리연못물투명함유리창보기눈속눈썹깜빡임신호교통신호빨간불정지멈춤쉼표문장단어글자알파벳A1등우승트로피금색해태양에너지전기번개지그재그뱀긴기차칙칙폭폭소리음성목소리노래가수무대조명밝음전구둥글음원동그라미0숫자계산수학문제해결열쇠금고비밀속삭임바람나뭇잎흔들림춤무용수발끝뾰족함바늘주사의사병원하얀색천사날개깃털가벼움공기풍선터짐놀람깜짝상자선물포장지반짝임별밤하늘어둠손전등빛길방향화살표활궁수과녁중심배꼽웃음간지럼깃털닭달걀노란색해바라기씨앗심기정원꽃향기벌꿀달콤함설탕하얀색소금짠맛눈물슬픔비구름회색코끼리코길음코뿔소뿔뾰족함연필쓰기손다섯별소원간절함기도교회종소리울림동심원물결바다끝없음무한우주신비마법지팡이막대직선자측정길이거리멀리여행모험탐험가나침반방향동서남북십자병원적십자도움손악수친구우정반지결혼사랑하트빨간색딸기달콤함미소입술키스사랑편지하트모양구름하늘파란색바다나무뿌리땅속지렁이움직임춤발레백조호수거울반사빛프리즘무지개색깔팔레트화가붓털고양이야옹밤달치즈쥐작은개미힘운동땀짠맛바다파도서핑보드스케이트얼음차가움겨울눈사람당근코냄새향수장미가시아픔눈물소금하얀색천사날개하늘구름양털실스웨터따뜻함포옹사랑하트빨간색사과과수원농장닭달걀노란색해바라기씨앗심기정원꽃벌꿀달콤함설탕커피원두갈색초콜릿카카오아프리카사자갈기머리카락샴푸거품비누방울터짐풍선파티케이크촛불불성냥나무종이책이야기상상꿈잠베개깃털새지저귐아침해태양에너지전기번개천둥소리음악피아노건반흑백체스말당근토끼귀듣기비밀속삭임바람연실거미거미줄덫사냥활화살과녁중심배꼽웃음기쁨축제불꽃놀이별소원유성속도자동차바퀴둥글음원0숫자계산수학문제해결열쇠자물쇠문집가족식탁음식포크길방향나침반북극펭귄턱시도정장회사일월요일우울파란색하늘새자유바람머리카락긴기차철도선로직선자측정길이키높이산등반밧줄매듭선원바다물고기비늘반짝임다이아몬드보석반지결혼웨딩드레스하얀색구름솜부드러움아기울음눈물슬픔비우산그림자해시계시간시계톱니바퀴기계로봇미래우주무중력떠다님풍선헬륨가벼움깃털간지럼웃음입치아하얀색우유젖소점박이달마시안개충실함친구우정손악수만남인사모자머리생각전구아이디어발명에디슨전기전선전봇대높이기린목목걸이진주조개바다소라껍데기나선회전팽이장난감어린이순수함맑음물투명함유리창문보기눈속눈썹깜빡임신호교통신호빨간불정지멈춤쉼표문장글작가펜잉크검은색밤올빼미지혜책도서관조용함명상연꽃연못개구리점프트램펄린튀어오름공농구골대높이사다리올라가기계단발걸음신발끈묶기선물리본나비변신애벌레잎초록색나무그늘시원함에어컨바람선풍기날개천사하얀색백지빈공간무선동그라미원완전함만족미소행복웃음소리메아리산골짜기강흐름시간모래시계모래해변조개소리바다깊이심해어둠랜턴불빛나방밤달빛은색거울반사거꾸로뒤집기손바닥손금운명별자리점연결선그림미술붓물감팔레트무지개비구름회색코끼리코길음보폭크기거대함공룡화석돌단단함근육운동헬스장거울모습외모화장립스틱빨간색장미향기코숨쉬기공기산소나무광합성햇빛따뜻함담요잠꿈구름양목장풀잔디축구공둥글음지구행성우주별반짝임다이아몬드보석상자열기비밀보물해적배항해바다수평선직선지름원파이수학계산기버튼누르기벨소리진동떨림지진흔들림나뭇잎바람태풍회전소용돌이물세탁기비누거품목욕따뜻함온도체온계열불용상상동화책종이접기종이비행기날기새하늘파란색바다깊이잠수숨참기인내기다림시간흐름강물돌건너뛰기개구리연못수련꽃꽃잎떨어짐가을단풍빨간색피심장박동리듬음악춤발레리나발끝뾰족함바늘실옷입기옷장문열기열쇠금고돈동전원형바퀴굴리기언덕올라가기힘들음숨가쁨달리기마라톤42.195km숫자암호비밀번호컴퓨터키보드타자소리딱딱나무딱따구리새부리뾰족함화살활무지개다리연결다리건너기강물생명나무산소숨쉬기살아있음움직임춤즐거움축제색깔알록달록앵무새말하기언어단어사전두꺼움책무게킬로그램단위측정자길이미터달리기100미터빠름치타점박이별밤하늘망원경보기관찰과학자실험실험실하얀가운의사청진기듣기귀소라껍데기바다소리파도물결움직임손짓인사안녕만남헤어짐눈물짠맛소금요리맛혀빨간색딸기달콤함꿀벌노란색줄무늬호랑이용감함사자왕왕관금색해밝음전구전기에너지힘근육팔껴안기사랑하트모양그리기크레파스색칠무지개일곱색숫자일곱요일월화수목금토일달력종이나무거울반사빛태양노란색바나나원숭이나무정글탐험모험책도서관조용함교회기도소원별밤올빼미부엉소리메아리산높이하늘새날개깃털가벼움바람연아이놀이터그네흔들림바다파도서핑균형줄타기서커스광대웃음기쁨선물상자네모정사각형수학계산컴퓨터마우스쥐치즈노란색레몬신맛찡그림표정얼굴눈눈물슬픔비우산빨간색딸기잼빵아침커피쓴맛어른일회사넥타이목기린점박이달마시안개꼬리흔들기인사만남악수손다섯손가락피아노음악춤발레백조우아함공주왕관보석다이아몬드반짝임별소원간절함마음하트빨간색사과과일나무그늘시원함여름바다수영물투명함유리창문집가족따뜻함포옹사랑결혼반지원완전함동그라미바퀴자전거페달다리걷기산책공원벤치앉기휴식잠꿈무지개색깔그림붓털고양이야옹밤달은색거울화장예쁨꽃향기벌꿀달콤함설탕하얀색눈겨울추위난로불따뜻함담요잠자리베개부드러움솜구름하늘파란색바다깊이고래큰코끼리코길다기차칙칙폭폭소리시끄러움조용함도서관책종이하얀색백지그림그리기연필나무숲나무잎초록색개구리연못물생명살아있음움직임운동건강의사병원하얀색간호사도움친절미소행복웃음소리음성노래가수무대조명밝음전구둥글음달밤어둠무서움유령하얀색시트침대잠코골이소리진동떨림지진흔들림나뭇가지바람시원함바람개비돌아감회전팽이장난감아이웃음즐거움놀이게임승부이기기1등금메달금색해바라기씨앗작은개미줄행진군대제복초록색나무산소숨쉬기코냄새향수꽃정원가꾸기물주기호스뱀길다머리카락빗질빗이빨하얀색치약민트시원함얼음차가움냉장고음식맛있음요리엄마사랑따뜻함온도체온계열아픔약쓴맛얼굴찡그림우는얼굴눈물물바다소금짠맛프렛즐과자바삭함소리씹기이빨상어무서움도망빨리달리기운동화신발발발가락다섯개손가락반지약속시간시계똑딱소리리듬음악드럼두드리기소리천둥번개빛밝음낮해뜨거움사막낙타혹산등반올라가기계단집문열기열쇠자물쇠잠그기안전경찰도움신고전화벨소리따르릉소리귀듣기음악멜로디아름다움꽃꽃밭나비날개하늘높이새둥지집따뜻함가족함께손잡기연결다리건너기강흐르기시간흘러가기과거추억사진앨범책페이지넘기기바람시원함선풍기바람돌아가기회전목마놀이공원즐거움웃음소리아이들순수함맑음물깨끗함씻기비누거품목욕욕조물따뜻함김올라가기하늘구름회색돌단단함벽그림액자네모사각형창문보기풍경산나무초록색잔디축구공차기발달리기빠름치타빠름바람머리카락날리기깃발나라애국가노래목소리말하기언어외국어공부학교선생님가르치기지식똑똑함부엉이올빼미밤어둠등불불빛따뜻함촛불촛농흘러내리기눈물슬픔위로포옹따뜻함마음사랑빨간색하트모양그리기색연필색깔무지개일곱요일달력날짜생일케이크촛불불어끄기소원별반짝임눈깜빡임윙크귀여움아기작음손작은손귀여움인형장난감놀이재미웃음입하얀이빨우유하얀색종이편지쓰기펜잉크파란색하늘새자유날기비행기여행가방짐무거움들기힘근육운동헬스건강채소초록색상추샐러드건강다이어트살빼기거울보기모습예뻐지기화장립스틱빨간색장미가시아픔찔림피빨간색소방차물끄기불뜨거움여름더위바다시원함파도서핑보드타기균형중심배꼽웃음간지럼깃털새하늘파란색평화조용함명상마음평온호수잔잔함거울같음반사빛반짝임다이아몬드비싸다돈동전동그라미원바퀴굴러가기언덕내려가기빠름스피드자동차빨간색멈춤신호등파란불가기걷기발걸음신발끈묶기나비매듭나비예쁨꽃향기좋은냄새향수병유리투명물깨끗함맑음하늘구름한점없음맑음날씨좋음기분좋음미소웃음하하소리크게확성기소리전달메시지편지우체부빨간모자빨간색토마토빨간색케첩감자튀김노란색바나나원숭이재미있음동물원구경보기눈속눈썹길다기린목높이하늘별밤달밝음등불불빛나방날아오기빛좋아함사랑마음따뜻함봄꽃피어남생명나무자라남키크기높이산올라가기힘들기숨차기헉헉개혀빨간색피생명중요함심장뛰기두근두근소리리듬박자음악악기피아노검은키하얀키체스게임이기기승리기쁨점프높이뛰기하늘가까이별손으로잡기불가능꿈상상생각머리똑똑함공부책읽기안경눈보기거울시계시간흐름강물생명나무뿌리땅지구둥글음공축구잔디초록색개구리점프높이하늘파란색바다깊이고래노래음악피아노건반손가락반지결혼사랑하트빨간색장미가시아픔약쓴맛얼굴찡그림웃음기쁨축제풍선터짐소리귀듣기비밀속삭임바람시원함부채접기종이하얀색눈겨울추위벽난로불따뜻함포옹가족집문열쇠자물쇠안전금고돈동전원형바퀴자전거페달다리걷기발걸음신발끈묶기매듭선원바다파도서핑보드나무숲새지저귐아침해밝음전구전기번개지그재그뱀긴기차철도직선자측정길이키높이산등반밧줄매달리기원숭이바나나노란색해바라기씨앗새부리뾰족함바늘실옷입기따뜻함온도체온계열불성냥작은개미힘들기운동근육팔손악수만남인사모자머리생각아이디어전구둥글음달밤올빼미부엉소리메아리산속나무그늘시원함여름바다물고기비늘반짝임별소원간절함기도교회종소리울림진동떨림무서움유령하얀색구름솜부드러움베개잠꿈무지개색깔크레파스그림붓털고양이야옹밤어둠랜턴불빛나방날개천사하늘높이새자유바람연실거미거미줄끈적함꿀벌노란색줄무늬호랑이용감함사자갈기머리카락긴공주왕관보석다이아몬드빛프리즘무지개일곱색요일달력종이책이야기상상꿈나라잠코골이소리시끄러움조용히도서관책지식똑똑함부엉이밤달빛은색거울반사물투명함유리창문보기풍경산골짜기강흐름시간모래시계모래해변조개소리바다소금짠맛눈물슬픔위로친구우정함께손잡기연결다리건너기용기마음따뜻함사랑빨간색사과맛있음먹기입이빨하얀색우유젖소점박이달마시안개충실함꼬리흔들기기쁨웃음미소행복햇살따뜻함봄꽃향기코냄새향수병유리깨짐조각퍼즐맞추기완성성취감기쁨박수소리박자리듬음악춤발레우아함백조호수잔잔함평화마음편안함휴식의자앉기다리쉬기잠깐시간짧음순간찰나번개빠름치타빠름달리기운동건강의사청진기심장뛰기생명소중함가족사랑따뜻함집보금자리새둥지새알둥글음원완전함만족미소입술빨간색립스틱화장예쁨거울모습외모옷패션멋짐모델워킹걷기산책공원벤치앉기할아버지할머니지혜경험이야기옛날과거추억사진앨범책페이지넘기기바람시원함선풍기돌아가기회전팽이장난감아이웃음순수함맑음하늘구름양털따뜻함스웨터겨울눈사람당근코길음코끼리큰거대함공룡화석돌단단함근육힘무거움들기역도운동땀짠맛바다수영물시원함얼음차가움냉장고음식맛있음요리엄마사랑마음따뜻함햇빛노란색레몬신맛찡그림표정얼굴눈보기관찰과학자실험실험실하얀가운의사도움치료건강운동달리기빠름바람머리카락날리기깃발나라태극기빨간색파란색색깔그림그리기붓물감팔레트화가예술아름다움꽃정원나비날개하늘높이비행기여행가방짐싸기준비계획미래꿈희망별밤하늘망원경보기달밝음등불불빛따뜻함촛불왁스녹기더위여름바다파도소리철썩철썩리듬박자드럼두드리기손박수소리기쁨축하생일케이크촛불소원빌기간절함마음진심정직거짓말안함진실사실현실실제만지기손느끼기감각오감다섯숫자수학계산머리똑똑함공부학교선생님가르치기지식배우기책읽기글자쓰기펜잉크파란색하늘새지저귐소리아름다움음악멜로디노래부르기목소리말하기언어외국어영어ABC알파벳26개숫자많음별셀수없음무한우주넓음광활함바다깊이심해어둠무서움도망빨리달리기운동화신발발10개발가락간지럼웃음즐거움놀이게임재미시간빨리감즐거운시간행복웃음소리하하호호재미있음코미디웃긴광대빨간코빨간색토마토빨갛다익었다맛있다먹고싶다배고픔밥쌀하얀색백미하얀순수깨끗함씻기물깨끗투명유리창문햇빛따뜻함기분좋음미소웃음입꼬리올라감위로하늘높이새자유로움바람시원함바람개비돌기회전원동그라미시계'
             }
         ];
         let lastLoadedText = null;
@@ -933,9 +937,10 @@
 
             isReading = true;
             isPaused = false;
-            startTime = Date.now();
+            startTime = performance.now(); // 더 정확한 시간 측정
             textRepeatCount = 0;
             currentIndex = 0;
+            nextScheduledTime = startTime;
             
             // 타이머 설정
             totalTimerMs = (settings.timerMinutes * 60 + settings.timerSeconds) * 1000;
@@ -956,13 +961,19 @@
             }
 
             enterFocusMode();
-            displayNextItem();
+            
+            // 성능 최적화된 디스플레이 시작
+            scheduleNextItem();
         }
 
         function pauseReading() {
             isPaused = true;
             if (currentTimeout) {
                 clearTimeout(currentTimeout);
+            }
+            if (frameRequestId) {
+                cancelAnimationFrame(frameRequestId);
+                frameRequestId = null;
             }
             if (timerInterval) {
                 clearInterval(timerInterval);
@@ -986,6 +997,7 @@
             pauseBtn.disabled = false;
             startBtn.textContent = '▶️ 시작';
             
+            // 타이머 재시작 시 정확한 시간 보정
             if (totalTimerMs > 0 && remainingTimerMs > 0) {
                 startTimer();
             }
@@ -998,7 +1010,9 @@
                 resetFocusTimeout();
             }
             
-            displayNextItem();
+            // 정확한 시간 재설정
+            nextScheduledTime = performance.now();
+            scheduleNextItem();
         }
 
         function stopReading() {
@@ -1006,6 +1020,10 @@
             isPaused = false;
             if (currentTimeout) {
                 clearTimeout(currentTimeout);
+            }
+            if (frameRequestId) {
+                cancelAnimationFrame(frameRequestId);
+                frameRequestId = null;
             }
             if (timerInterval) {
                 clearInterval(timerInterval);
@@ -1023,19 +1041,35 @@
             currentChar.textContent = '훈련이 완료되었습니다. 다시 시작하려면 시작 버튼을 눌러주세요.';
         }
 
-        function displayNextItem() {
+        function scheduleNextItem() {
             if (!isReading || isPaused) return;
 
+            const now = performance.now();
+            
+            if (now >= nextScheduledTime) {
+                displayCurrentItem();
+                
+                // 다음 아이템 스케줄링
+                const currentSpeed = getCurrentSpeed();
+                nextScheduledTime += currentSpeed;
+                currentIndex++;
+                
+                // 즉시 다음 아이템 처리
+                scheduleNextItem();
+            } else {
+                // 정확한 타이밍을 위해 requestAnimationFrame 사용
+                frameRequestId = requestAnimationFrame(scheduleNextItem);
+            }
+        }
+
+        function displayCurrentItem() {
+            // 텍스트 끝 처리
             if (currentIndex >= processedText.length) {
-                // 텍스트가 끝났을 때
                 if (totalTimerMs > 0 && remainingTimerMs > 0) {
-                    // 타이머가 남았을 때
-                    const mode = playbackMode.value;
+                    const mode = settings.playbackMode;
                     if (mode === 'random' && textLibrary.length > 1) {
-                        // 랜덤 모드: 다른 텍스트 선택
                         loadRandomText();
                     } else {
-                        // 반복 모드: 같은 텍스트 반복
                         currentIndex = 0;
                         textRepeatCount++;
                     }
@@ -1045,43 +1079,60 @@
                 }
             }
 
+            // 현재 아이템 표시 (DOM 업데이트 최소화)
             const currentItem = processedText[currentIndex];
-            currentChar.textContent = currentItem;
+            if (currentChar.textContent !== currentItem) {
+                currentChar.textContent = currentItem;
+            }
 
+            // 10번째마다 한 번씩만 UI 업데이트 (성능 최적화)
+            if (currentIndex % 10 === 0 || currentIndex === 0) {
+                updateProgressDisplay();
+            }
+        }
+
+        function updateProgressDisplay() {
+            const now = performance.now();
+            
             // 진행률 업데이트
             const totalItems = processedText.length;
             let displayProgress;
             
             if (totalTimerMs > 0) {
-                // 타이머가 설정되어 있으면 타이머 기준으로 진행률 계산
                 const timerProgress = ((totalTimerMs - remainingTimerMs) / totalTimerMs) * 100;
                 displayProgress = Math.min(100, Math.max(0, timerProgress));
-                progressText.textContent = Math.round(displayProgress) + '%';
             } else {
-                // 타이머가 없으면 텍스트 진행률 기준
                 const textProgress = ((textRepeatCount * totalItems + currentIndex) / totalItems) * 100;
                 displayProgress = Math.min(100, textProgress);
-                progressText.textContent = Math.round(displayProgress) + '%';
             }
             
-            progressFill.style.width = displayProgress + '%';
+            // DOM 업데이트 최소화 - 실제 변화가 있을 때만
+            const progressPercent = Math.round(displayProgress);
+            if (progressText.textContent !== progressPercent + '%') {
+                progressFill.style.width = displayProgress + '%';
+                progressText.textContent = progressPercent + '%';
+            }
 
-            // 경과 시간 업데이트
-            const elapsedMs = Date.now() - startTime;
-            const minutes = Math.floor(elapsedMs / 60000);
-            const seconds = Math.floor((elapsedMs % 60000) / 1000);
-            elapsed.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            // 경과 시간 업데이트 (1초마다만)
+            if (now - lastUpdateTime > 1000) {
+                const elapsedMs = now - startTime;
+                const minutes = Math.floor(elapsedMs / 60000);
+                const seconds = Math.floor((elapsedMs % 60000) / 1000);
+                const timeStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (elapsed.textContent !== timeStr) {
+                    elapsed.textContent = timeStr;
+                }
 
-            // 현재 속도 계산 (시간 기반)
-            const currentSpeed = getCurrentSpeed();
-            currentSpeedDisplay.textContent = Math.round(currentSpeed);
+                // 현재 속도 표시 업데이트
+                const currentSpeed = Math.round(getCurrentSpeed());
+                const speedStr = currentSpeed.toString();
+                if (currentSpeedDisplay.textContent !== speedStr) {
+                    currentSpeedDisplay.textContent = speedStr;
+                }
 
-            currentIndex++;
-
-            // 다음 아이템 예약
-            currentTimeout = setTimeout(() => {
-                displayNextItem();
-            }, currentSpeed);
+                lastUpdateTime = now;
+            }
         }
 
         function getCurrentSpeed() {
@@ -1093,15 +1144,13 @@
                 return startSpeed;
             }
 
-            // 시간 기반으로 속도 계산 (텍스트 진행률과 무관)
-            const elapsedSeconds = (Date.now() - startTime) / 1000;
+            // 시간 기반으로 속도 계산 (더 정확한 performance.now() 사용)
+            const elapsedSeconds = (performance.now() - startTime) / 1000;
             
             if (elapsedSeconds >= transitionDuration) {
-                // 설정된 변화 시간이 지나면 최종 속도로 고정
                 return endSpeed;
             }
             
-            // 변화 시간 동안만 점진적으로 변화
             const progressRatio = elapsedSeconds / transitionDuration;
             const speedDiff = endSpeed - startSpeed;
             const currentSpeed = startSpeed + (speedDiff * progressRatio);
