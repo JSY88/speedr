@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>빠른 읽기 훈련</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .control-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        input[type="range"], input[type="number"], select, input[type="color"] {
+            padding: 8px 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        input[type="number"] {
+            width: 80px;
+        }
+
+        input[type="color"] {
+            width: 50px;
+            height: 40px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        select {
+            min-width: 120px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ff7b7b 0%, #ff6b6b 100%);
+            color: white;
+        }
+
+        .btn-tertiary {
+            background: linear-gradient(135deg, #ffa726 0%, #ff9800 100%);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .reading-area {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+            text-align: center;
+            position: relative;
+        }
+
+        .reading-area.focus-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            border-radius: 0;
+            margin: 0;
+        }
+
+        .current-char {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1;
+            transition: all 0.1s ease;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            word-break: break-all;
+            overflow-wrap: break-word;
+            max-width: 100%;
+        }
+
+        .progress-info {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%);
+            transition: width 0.3s ease;
+            border-radius: 4px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.9rem;
+            color: #666;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .focus-hint {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .reading-area.focus-mode .focus-hint {
+            opacity: 1;
+        }
+
+        .focus-controls {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+
+        .reading-area.show-controls .focus-controls {
+            opacity: 1;
+        }
+
+        .focus-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            min-width: 80px;
+        }
+
+        .focus-btn-primary {
+            background: rgba(76, 175, 80, 0.9);
+        }
+
+        .focus-btn-secondary {
+            background: rgba(255, 123, 123, 0.9);
+        }
+
+        .focus-btn-tertiary {
+            background: rgba(255, 167, 38, 0.9);
+        }
+
+        .focus-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .timer-display {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .reading-area.focus-mode .timer-display {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .controls {
+                padding: 20px;
+            }
+
+            .current-char {
+                font-size: 3rem;
+                min-height: 60px;
+            }
+
+            .reading-area {
+                padding: 20px;
+                min-height: 250px;
+            }
+
+            .control-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-row > * {
+                width: 100%;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .focus-controls {
+                bottom: 20px;
+                gap: 10px;
+            }
+
+            .focus-btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                min-width: 70px;
+            }
+
+            .timer-display {
+                top: 15px;
+                left: 15px;
+                font-size: 0.9rem;
+                padding: 6px 12px;
+            }
+
+            .focus-hint {
+                top: 15px;
+                right: 15px;
+                font-size: 0.75rem;
+                padding: 6px 10px;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ 빠른 읽기 훈련</h1>
+            <p>글자 단위 빠른 읽기로 기분과 집중력을 향상시켜보세요</p>
+            <p style="font-size: 0.75rem; margin-top: 5px; opacity: 0.7;">💾 설정 자동 저장 | ⚠️ 라이브러리는 세션 동안만 유지 (실제 환경에서 영구 저장 가능)</p>
+        </div>
+
+        <div class="controls" id="controls">
+            <div class="control-group">
+                <label>📚 텍스트 라이브러리</label>
+                <div class="control-row">
+                    <select id="librarySelect" style="flex: 1;">
+                        <option value="">라이브러리에서 선택...</option>
+                    </select>
+                    <button type="button" onclick="loadFromLibrary()" style="padding: 8px 15px; border: 2px solid #e1e8ed; border-radius: 10px; background: #f8f9fa; cursor: pointer; font-size: 0.9rem;">불러오기</button>
+                    <button type="button" onclick="deleteFromLibrary()" style="padding: 8px 15px; border: 2px solid #ff6b6b; border-radius: 10px; background: #ffe0e0; color: #ff6b6b; cursor: pointer; font-size: 0.9rem;">삭제</button>
+                </div>
+                
+                <!-- 새 텍스트 추가 섹션 -->
+                <div style="margin-top: 15px; padding: 15px; background: rgba(102, 126, 234, 0.05); border-radius: 10px; border: 1px solid rgba(102, 126, 234, 0.2);">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 0.9rem;">📝 새 텍스트 추가</label>
+                    <input type="text" id="newLibraryName" placeholder="텍스트 이름" style="width: 100%; padding: 8px 12px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 0.9rem; margin-bottom: 8px;">
+                    <textarea id="newLibraryText" placeholder="여기에 텍스트를 입력하세요..." style="width: 100%; height: 100px; padding: 8px 12px; border: 2px solid #e1e8ed; border-radius: 10px; font-size: 0.9rem; resize: vertical; font-family: inherit; margin-bottom: 8px;"></textarea>
+                    <div class="control-row">
+                        <button type="button" onclick="addTextToLibrary()" style="flex: 1; padding: 10px; border: none; border-radius: 10px; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; cursor: pointer; font-size: 0.9rem; font-weight: 600;">라이브러리에 추가</button>
+                        <button type="button" onclick="addCurrentToLibrary()" style="flex: 1; padding: 10px; border: none; border-radius: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; cursor: pointer; font-size: 0.9rem; font-weight: 600; margin-left: 8px;">현재 텍스트 추가</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>🎲 재생 모드</label>
+                <div class="control-row">
+                    <select id="playbackMode">
+                        <option value="repeat">반복 재생</option>
+                        <option value="random">랜덤 재생</option>
+                    </select>
+                </div>
+                <div style="margin-top: 5px; font-size: 0.75rem; color: #666;">
+                    랜덤 모드: 텍스트가 끝나면 라이브러리에서 다른 텍스트를 자동 선택
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>📄 텍스트 파일 선택</label>
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".txt">
+                    <label for="fileInput" class="file-input-label">텍스트 파일 선택 (.txt)</label>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>⚡ 속도 설정 (밀리초)</label>
+                <div class="control-row">
+                    <input type="range" id="startSpeed" min="40" max="500" value="200">
+                    <input type="number" id="startSpeedNum" min="40" max="500" value="200">
+                    <span>→</span>
+                    <input type="range" id="endSpeed" min="40" max="500" value="40">
+                    <input type="number" id="endSpeedNum" min="40" max="500" value="40">
+                </div>
+                <div style="margin-top: 10px;">
+                    <label style="margin-bottom: 5px;">점진적 변화 시간 (초)</label>
+                    <div class="control-row">
+                        <input type="range" id="transitionDuration" min="0" max="60" value="10">
+                        <input type="number" id="transitionDurationNum" min="0" max="60" value="10">
+                    </div>
+                    <div style="margin-top: 5px; font-size: 0.75rem; color: #666; line-height: 1.3;">
+                        <strong>0초</strong>: 처음부터 끝까지 고정 속도 (시작 속도로만 진행)<br>
+                        <strong>10초</strong>: 훈련 시작 후 정확히 10초 동안 시작→끝 속도로 변화<br>
+                        <strong>30초 이상</strong>: 30초 후 최고 속도 도달, 이후 계속 유지 (텍스트 반복시에도 유지)
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>🎨 디스플레이 설정</label>
+                <div class="control-row">
+                    <select id="fontFamily">
+                        <option value="'Noto Sans KR', Arial, sans-serif">Noto Sans KR</option>
+                        <option value="'Malgun Gothic', sans-serif">맑은 고딕</option>
+                        <option value="'Nanum Gothic', sans-serif">나눔고딕</option>
+                        <option value="monospace">Monospace</option>
+                    </select>
+                    <input type="range" id="fontSize" min="20" max="900" value="40" step="10">
+                    <input type="number" id="fontSizeNum" min="20" max="900" value="40" step="10">
+                    <span>px</span>
+                </div>
+                <div class="control-row" style="margin-top: 10px;">
+                    <input type="color" id="textColor" value="#333333">
+                    <span>텍스트</span>
+                    <input type="color" id="bgColor" value="#ffffff">
+                    <span>배경</span>
+                </div>
+                <div style="margin-top: 5px; font-size: 0.75rem; color: #666;">
+                    큰 폰트 크기(300px+)는 몰입도 향상에 도움이 되지만, 화면 크기를 고려하세요
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>📖 읽기 모드</label>
+                <div class="control-row">
+                    <select id="readingMode">
+                        <option value="char">글자 단위</option>
+                        <option value="word">단어 단위</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>⏰ 훈련 시간 설정</label>
+                <div class="control-row">
+                    <input type="number" id="timerMinutes" min="0" max="60" value="5" style="width: 80px;">
+                    <span>분</span>
+                    <input type="number" id="timerSeconds" min="0" max="59" value="0" style="width: 80px;">
+                    <span>초</span>
+                    <span style="font-size: 0.8rem; color: #666;">(0분 0초 = 무제한)</span>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button class="btn btn-primary" onclick="startReading()" id="startBtn">▶️ 시작</button>
+                <button class="btn btn-secondary" onclick="pauseReading()" id="pauseBtn" disabled>⏸️ 일시정지</button>
+                <button class="btn btn-tertiary" onclick="stopReading()" id="stopBtn" disabled>⏹️ 정지</button>
+            </div>
+        </div>
+
+        <div class="reading-area" id="readingArea" onclick="toggleFocusMode()">
+            <div class="focus-hint">화면을 터치하면 집중 모드가 해제됩니다</div>
+            <div class="timer-display" id="timerDisplay">05:00</div>
+            <div class="current-char" id="currentChar">텍스트를 선택하고 시작 버튼을 눌러주세요</div>
+            <div class="focus-controls" id="focusControls">
+                <button class="focus-btn focus-btn-primary" onclick="event.stopPropagation(); resumeReading()" id="focusResumeBtn">▶️ 재개</button>
+                <button class="focus-btn focus-btn-secondary" onclick="event.stopPropagation(); pauseReading()" id="focusPauseBtn">⏸️ 일시정지</button>
+                <button class="focus-btn focus-btn-tertiary" onclick="event.stopPropagation(); stopReading()" id="focusStopBtn">⏹️ 정지</button>
+            </div>
+            <div class="progress-info">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="progressText">0%</div>
+                        <div id="progressLabel">진행률</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentSpeed">200</div>
+                        <div>현재 속도 (ms)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="elapsed">00:00</div>
+                        <div>경과 시간</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let text = '';
+        let processedText = '';
+        let currentIndex = 0;
+        let isReading = false;
+        let isPaused = false;
+        let startTime = 0;
+        let currentTimeout;
+        let focusTimeout;
+        let isFocusMode = false;
+        let timerInterval;
+        let totalTimerMs = 0;
+        let remainingTimerMs = 0;
+        let textRepeatCount = 0;
+        let textLibrary = [
+            {
+                name: '샘플 텍스트 - 빠른 읽기 소개',
+                content: '빠른 읽기 훈련에 오신 것을 환영합니다. 이 기술은 여러분의 읽기 속도와 집중력을 동시에 향상시킬 수 있는 놀라운 방법입니다. 연구에 따르면 글자를 빠르게 제시했을 때 기분이 현저히 향상되는 것으로 나타났습니다. 이는 텍스트의 내용이 긍정적이든 부정적이든 관계없이 나타나는 현상입니다. 빠른 읽기는 조증과 유사한 상태를 유도하여 주관적인 힘, 창의성, 에너지 증가를 가져다줍니다. 지금부터 이 훌륭한 훈련을 시작해보세요.'
+            }
+        ];
+        let lastLoadedText = null;
+        let settings = {
+            startSpeed: 200,
+            endSpeed: 40,
+            transitionDuration: 10,
+            fontSize: 40,
+            fontFamily: "'Noto Sans KR', Arial, sans-serif",
+            textColor: '#333333',
+            bgColor: '#ffffff',
+            readingMode: 'char',
+            timerMinutes: 5,
+            timerSeconds: 0,
+            playbackMode: 'repeat'
+        };
+
+        // 요소들
+        const fileInput = document.getElementById('fileInput');
+        const librarySelect = document.getElementById('librarySelect');
+        const newLibraryName = document.getElementById('newLibraryName');
+        const newLibraryText = document.getElementById('newLibraryText');
+        const playbackMode = document.getElementById('playbackMode');
+        const startSpeedRange = document.getElementById('startSpeed');
+        const startSpeedNum = document.getElementById('startSpeedNum');
+        const endSpeedRange = document.getElementById('endSpeed');
+        const endSpeedNum = document.getElementById('endSpeedNum');
+        const transitionRange = document.getElementById('transitionDuration');
+        const transitionNum = document.getElementById('transitionDurationNum');
+        const fontFamily = document.getElementById('fontFamily');
+        const fontSizeRange = document.getElementById('fontSize');
+        const fontSizeNum = document.getElementById('fontSizeNum');
+        const textColor = document.getElementById('textColor');
+        const bgColor = document.getElementById('bgColor');
+        const readingMode = document.getElementById('readingMode');
+        const timerMinutes = document.getElementById('timerMinutes');
+        const timerSeconds = document.getElementById('timerSeconds');
+        const currentChar = document.getElementById('currentChar');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const progressLabel = document.getElementById('progressLabel');
+        const currentSpeedDisplay = document.getElementById('currentSpeed');
+        const elapsed = document.getElementById('elapsed');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const readingArea = document.getElementById('readingArea');
+        const controls = document.getElementById('controls');
+        const focusControls = document.getElementById('focusControls');
+        const startBtn = document.getElementById('startBtn');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const focusResumeBtn = document.getElementById('focusResumeBtn');
+        const focusPauseBtn = document.getElementById('focusPauseBtn');
+        const focusStopBtn = document.getElementById('focusStopBtn');
+
+        // 이벤트 리스너
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // 타이머 업데이트
+        timerMinutes.addEventListener('input', () => {
+            settings.timerMinutes = parseInt(timerMinutes.value) || 0;
+            updateTimerDisplay();
+        });
+        timerSeconds.addEventListener('input', () => {
+            settings.timerSeconds = parseInt(timerSeconds.value) || 0;
+            updateTimerDisplay();
+        });
+        
+        // 속도 동기화
+        startSpeedRange.addEventListener('input', () => {
+            startSpeedNum.value = startSpeedRange.value;
+            settings.startSpeed = parseInt(startSpeedRange.value);
+        });
+        startSpeedNum.addEventListener('input', () => {
+            startSpeedRange.value = startSpeedNum.value;
+            settings.startSpeed = parseInt(startSpeedNum.value);
+        });
+        endSpeedRange.addEventListener('input', () => {
+            endSpeedNum.value = endSpeedRange.value;
+            settings.endSpeed = parseInt(endSpeedRange.value);
+        });
+        endSpeedNum.addEventListener('input', () => {
+            endSpeedRange.value = endSpeedNum.value;
+            settings.endSpeed = parseInt(endSpeedNum.value);
+        });
+        transitionRange.addEventListener('input', () => {
+            transitionNum.value = transitionRange.value;
+            settings.transitionDuration = parseInt(transitionRange.value);
+        });
+        transitionNum.addEventListener('input', () => {
+            transitionRange.value = transitionNum.value;
+            settings.transitionDuration = parseInt(transitionNum.value);
+        });
+        fontSizeRange.addEventListener('input', () => {
+            fontSizeNum.value = fontSizeRange.value;
+            settings.fontSize = parseInt(fontSizeRange.value);
+            updateFontSize();
+        });
+        fontSizeNum.addEventListener('input', () => {
+            fontSizeRange.value = fontSizeNum.value;
+            settings.fontSize = parseInt(fontSizeNum.value);
+            updateFontSize();
+        });
+
+        // 스타일 변경 이벤트
+        fontFamily.addEventListener('change', () => {
+            settings.fontFamily = fontFamily.value;
+            updateFontFamily();
+        });
+        textColor.addEventListener('change', () => {
+            settings.textColor = textColor.value;
+            updateTextColor();
+        });
+        bgColor.addEventListener('change', () => {
+            settings.bgColor = bgColor.value;
+            updateBgColor();
+        });
+        readingMode.addEventListener('change', () => {
+            settings.readingMode = readingMode.value;
+            if (text) {
+                processedText = processText(text);
+                currentChar.textContent = `텍스트가 재처리되었습니다. (${processedText.length}${readingMode.value === 'word' ? '단어' : '자'}) 시작 버튼을 눌러주세요.`;
+                resetProgress();
+            }
+        });
+
+        playbackMode.addEventListener('change', () => {
+            settings.playbackMode = playbackMode.value;
+        });
+
+        // 키보드 이벤트
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                if (isReading && !isPaused) {
+                    pauseReading();
+                } else if (isPaused) {
+                    resumeReading();
+                } else if (text) {
+                    startReading();
+                }
+            } else if (e.code === 'Escape') {
+                if (isReading) {
+                    stopReading();
+                }
+                if (isFocusMode) {
+                    exitFocusMode();
+                }
+            }
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file && file.type === 'text/plain') {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const rawText = e.target.result;
+                    loadText(rawText, file.name);
+                };
+                reader.readAsText(file, 'UTF-8');
+            }
+        }
+
+        function loadText(rawText, filename = '') {
+            text = rawText;
+            lastLoadedText = { content: rawText, name: filename };
+            processedText = processText(rawText);
+            currentChar.textContent = `텍스트가 로드되었습니다. (${processedText.length}자) 시작 버튼을 눌러주세요.`;
+            resetProgress();
+        }
+
+        function processText(rawText) {
+            const mode = readingMode.value;
+            if (mode === 'word') {
+                // 단어 모드: 여러 공백을 하나로 통합하고 split
+                return rawText.replace(/\s+/g, ' ').trim().split(' ').filter(word => word.length > 0);
+            } else {
+                // 글자 모드: 모든 공백 문자 제거
+                return rawText.replace(/\s/g, '').split('').filter(char => char.length > 0);
+            }
+        }
+
+        function populateLibrary() {
+            librarySelect.innerHTML = '<option value="">라이브러리에서 선택...</option>';
+            textLibrary.forEach((item, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${item.name} (${item.content.length}자)`;
+                librarySelect.appendChild(option);
+            });
+        }
+
+        function loadFromLibrary() {
+            const selectedIndex = librarySelect.value;
+            if (selectedIndex !== '') {
+                const selectedItem = textLibrary[selectedIndex];
+                loadText(selectedItem.content, selectedItem.name);
+            }
+        }
+
+        function addTextToLibrary() {
+            const name = newLibraryName.value.trim();
+            const content = newLibraryText.value.trim();
+            
+            if (!name) {
+                alert('텍스트 이름을 입력해주세요.');
+                return;
+            }
+            if (!content) {
+                alert('텍스트 내용을 입력해주세요.');
+                return;
+            }
+            
+            textLibrary.push({
+                name: name,
+                content: content
+            });
+            
+            populateLibrary();
+            saveLibraryToStorage();
+            newLibraryName.value = '';
+            newLibraryText.value = '';
+            alert(`"${name}"이(가) 라이브러리에 추가되었습니다.`);
+        }
+
+        function addCurrentToLibrary() {
+            const name = newLibraryName.value.trim();
+            if (!name) {
+                alert('라이브러리 항목 이름을 입력해주세요.');
+                return;
+            }
+            if (!text) {
+                alert('추가할 텍스트가 없습니다. 먼저 텍스트를 로드해주세요.');
+                return;
+            }
+            
+            textLibrary.push({
+                name: name,
+                content: text
+            });
+            
+            populateLibrary();
+            saveLibraryToStorage();
+            newLibraryName.value = '';
+            alert(`"${name}"이(가) 라이브러리에 추가되었습니다.`);
+        }
+
+        function deleteFromLibrary() {
+            const selectedIndex = librarySelect.value;
+            if (selectedIndex === '') {
+                alert('삭제할 항목을 선택해주세요.');
+                return;
+            }
+            
+            const selectedItem = textLibrary[selectedIndex];
+            if (confirm(`"${selectedItem.name}"을(를) 삭제하시겠습니까?`)) {
+                textLibrary.splice(selectedIndex, 1);
+                populateLibrary();
+                saveLibraryToStorage();
+                alert('삭제되었습니다.');
+            }
+        }
+
+        function loadRandomText() {
+            if (textLibrary.length <= 1) return;
+            
+            // 현재 텍스트와 다른 것 중에서 랜덤 선택
+            const availableTexts = textLibrary.filter(item => item.content !== text);
+            if (availableTexts.length === 0) return;
+            
+            const randomIndex = Math.floor(Math.random() * availableTexts.length);
+            const randomText = availableTexts[randomIndex];
+            
+            // 새 텍스트로 변경하되 인덱스는 리셋
+            text = randomText.content;
+            processedText = processText(randomText.content);
+            currentIndex = 0;
+            textRepeatCount++;
+            
+            // 사용자에게 알림 (집중 모드에서는 보이지 않음)
+            console.log(`🎲 랜덤 선택: ${randomText.name}`);
+        }
+
+        function saveLibraryToStorage() {
+            // 메모리에만 저장 (Claude.ai 환경에서는 localStorage 지원 안함)
+            // 자신의 환경에서 사용하려면 아래 주석을 해제하세요:
+            // try {
+            //     localStorage.setItem('speedReadingLibrary', JSON.stringify(textLibrary));
+            // } catch (e) {
+            //     console.log('로컬 저장소 저장 실패:', e);
+            // }
+        }
+
+        function loadLibraryFromStorage() {
+            // 메모리에서만 로드 (Claude.ai 환경에서는 localStorage 지원 안함)
+            // 자신의 환경에서 사용하려면 아래 주석을 해제하세요:
+            // try {
+            //     const saved = localStorage.getItem('speedReadingLibrary');
+            //     if (saved) {
+            //         const savedLibrary = JSON.parse(saved);
+            //         textLibrary = [...textLibrary, ...savedLibrary];
+            //     }
+            // } catch (e) {
+            //     console.log('로컬 저장소 로드 실패:', e);
+            // }
+        }
+
+        function loadSampleText() {
+            // 샘플 텍스트는 이제 라이브러리의 첫 번째 항목으로 처리
+            if (textLibrary.length > 0) {
+                loadText(textLibrary[0].content, textLibrary[0].name);
+            }
+        }
+
+        function startReading() {
+            if (!text) {
+                alert('먼저 텍스트를 선택해주세요.');
+                return;
+            }
+
+            // 현재 읽기 모드에 맞게 텍스트 재처리
+            processedText = processText(text);
+
+            isReading = true;
+            isPaused = false;
+            startTime = Date.now();
+            textRepeatCount = 0;
+            currentIndex = 0;
+            
+            // 타이머 설정
+            totalTimerMs = (settings.timerMinutes * 60 + settings.timerSeconds) * 1000;
+            remainingTimerMs = totalTimerMs;
+            
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            stopBtn.disabled = false;
+
+            // 집중 모드 버튼 상태 업데이트
+            updateFocusButtons();
+
+            if (totalTimerMs > 0) {
+                startTimer();
+                progressLabel.textContent = '훈련 시간';
+            } else {
+                progressLabel.textContent = '텍스트 진행률';
+            }
+
+            enterFocusMode();
+            displayNextItem();
+        }
+
+        function pauseReading() {
+            isPaused = true;
+            if (currentTimeout) {
+                clearTimeout(currentTimeout);
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            startBtn.textContent = '▶️ 재개';
+            
+            updateFocusButtons();
+        }
+
+        function resumeReading() {
+            if (!isReading) {
+                startReading();
+                return;
+            }
+            
+            isPaused = false;
+            startBtn.disabled = true;
+            pauseBtn.disabled = false;
+            startBtn.textContent = '▶️ 시작';
+            
+            if (totalTimerMs > 0 && remainingTimerMs > 0) {
+                startTimer();
+            }
+            
+            updateFocusButtons();
+            
+            // 재개시 자동으로 집중 모드로 전환
+            if (isFocusMode) {
+                readingArea.classList.remove('show-controls');
+                resetFocusTimeout();
+            }
+            
+            displayNextItem();
+        }
+
+        function stopReading() {
+            isReading = false;
+            isPaused = false;
+            if (currentTimeout) {
+                clearTimeout(currentTimeout);
+            }
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            startBtn.disabled = false;
+            pauseBtn.disabled = true;
+            stopBtn.disabled = true;
+            startBtn.textContent = '▶️ 시작';
+            
+            exitFocusMode();
+            resetProgress();
+            updateFocusButtons();
+            progressLabel.textContent = '진행률';
+            currentChar.textContent = '훈련이 완료되었습니다. 다시 시작하려면 시작 버튼을 눌러주세요.';
+        }
+
+        function displayNextItem() {
+            if (!isReading || isPaused) return;
+
+            if (currentIndex >= processedText.length) {
+                // 텍스트가 끝났을 때
+                if (totalTimerMs > 0 && remainingTimerMs > 0) {
+                    // 타이머가 남았을 때
+                    const mode = playbackMode.value;
+                    if (mode === 'random' && textLibrary.length > 1) {
+                        // 랜덤 모드: 다른 텍스트 선택
+                        loadRandomText();
+                    } else {
+                        // 반복 모드: 같은 텍스트 반복
+                        currentIndex = 0;
+                        textRepeatCount++;
+                    }
+                } else {
+                    stopReading();
+                    return;
+                }
+            }
+
+            const currentItem = processedText[currentIndex];
+            currentChar.textContent = currentItem;
+
+            // 진행률 업데이트
+            const totalItems = processedText.length;
+            let displayProgress;
+            
+            if (totalTimerMs > 0) {
+                // 타이머가 설정되어 있으면 타이머 기준으로 진행률 계산
+                const timerProgress = ((totalTimerMs - remainingTimerMs) / totalTimerMs) * 100;
+                displayProgress = Math.min(100, Math.max(0, timerProgress));
+                progressText.textContent = Math.round(displayProgress) + '%';
+            } else {
+                // 타이머가 없으면 텍스트 진행률 기준
+                const textProgress = ((textRepeatCount * totalItems + currentIndex) / totalItems) * 100;
+                displayProgress = Math.min(100, textProgress);
+                progressText.textContent = Math.round(displayProgress) + '%';
+            }
+            
+            progressFill.style.width = displayProgress + '%';
+
+            // 경과 시간 업데이트
+            const elapsedMs = Date.now() - startTime;
+            const minutes = Math.floor(elapsedMs / 60000);
+            const seconds = Math.floor((elapsedMs % 60000) / 1000);
+            elapsed.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // 현재 속도 계산 (시간 기반)
+            const currentSpeed = getCurrentSpeed();
+            currentSpeedDisplay.textContent = Math.round(currentSpeed);
+
+            currentIndex++;
+
+            // 다음 아이템 예약
+            currentTimeout = setTimeout(() => {
+                displayNextItem();
+            }, currentSpeed);
+        }
+
+        function getCurrentSpeed() {
+            const startSpeed = settings.startSpeed;
+            const endSpeed = settings.endSpeed;
+            const transitionDuration = settings.transitionDuration;
+
+            if (transitionDuration === 0) {
+                return startSpeed;
+            }
+
+            // 시간 기반으로 속도 계산 (텍스트 진행률과 무관)
+            const elapsedSeconds = (Date.now() - startTime) / 1000;
+            
+            if (elapsedSeconds >= transitionDuration) {
+                // 설정된 변화 시간이 지나면 최종 속도로 고정
+                return endSpeed;
+            }
+            
+            // 변화 시간 동안만 점진적으로 변화
+            const progressRatio = elapsedSeconds / transitionDuration;
+            const speedDiff = endSpeed - startSpeed;
+            const currentSpeed = startSpeed + (speedDiff * progressRatio);
+            
+            return Math.max(endSpeed, Math.min(startSpeed, currentSpeed));
+        }
+
+        function enterFocusMode() {
+            isFocusMode = true;
+            readingArea.classList.add('focus-mode');
+            controls.classList.add('hidden');
+            readingArea.classList.remove('show-controls');
+            resetFocusTimeout();
+        }
+
+        function exitFocusMode() {
+            isFocusMode = false;
+            readingArea.classList.remove('focus-mode');
+            controls.classList.remove('hidden');
+            readingArea.classList.remove('show-controls');
+            if (focusTimeout) {
+                clearTimeout(focusTimeout);
+            }
+        }
+
+        function toggleFocusMode() {
+            if (isReading) {
+                if (isFocusMode) {
+                    // 집중 모드 해제시 자동 일시정지
+                    if (!isPaused) {
+                        pauseReading();
+                    }
+                    readingArea.classList.add('show-controls');
+                    updateFocusButtons();
+                } else {
+                    readingArea.classList.remove('show-controls');
+                    enterFocusMode();
+                }
+            }
+        }
+
+        function resetFocusTimeout() {
+            if (focusTimeout) {
+                clearTimeout(focusTimeout);
+            }
+            if (isReading && !isFocusMode && !isPaused) {
+                focusTimeout = setTimeout(() => {
+                    if (isReading && !isPaused) {
+                        enterFocusMode();
+                    }
+                }, 3000);
+            }
+        }
+
+        function updateFocusButtons() {
+            if (isPaused) {
+                focusResumeBtn.style.display = 'block';
+                focusPauseBtn.style.display = 'none';
+            } else {
+                focusResumeBtn.style.display = 'none';
+                focusPauseBtn.style.display = 'block';
+            }
+        }
+
+        function loadSettings() {
+            // 설정값들을 UI에 적용
+            startSpeedRange.value = settings.startSpeed;
+            startSpeedNum.value = settings.startSpeed;
+            endSpeedRange.value = settings.endSpeed;
+            endSpeedNum.value = settings.endSpeed;
+            transitionRange.value = settings.transitionDuration;
+            transitionNum.value = settings.transitionDuration;
+            fontSizeRange.value = settings.fontSize;
+            fontSizeNum.value = settings.fontSize;
+            fontFamily.value = settings.fontFamily;
+            textColor.value = settings.textColor;
+            bgColor.value = settings.bgColor;
+            readingMode.value = settings.readingMode;
+            timerMinutes.value = settings.timerMinutes;
+            timerSeconds.value = settings.timerSeconds;
+            playbackMode.value = settings.playbackMode;
+        }
+
+        function updateFontFamily() {
+            currentChar.style.fontFamily = fontFamily.value;
+        }
+
+        function updateFontSize() {
+            currentChar.style.fontSize = fontSizeNum.value + 'px';
+        }
+
+        function updateTextColor() {
+            currentChar.style.color = textColor.value;
+        }
+
+        function updateBgColor() {
+            readingArea.style.background = bgColor.value;
+        }
+
+        function resetProgress() {
+            currentIndex = 0;
+            textRepeatCount = 0;
+            progressFill.style.width = '0%';
+            progressText.textContent = '0%';
+            progressLabel.textContent = '진행률';
+            currentSpeedDisplay.textContent = settings.startSpeed;
+            elapsed.textContent = '00:00';
+            
+            // 타이머 리셋
+            totalTimerMs = (settings.timerMinutes * 60 + settings.timerSeconds) * 1000;
+            remainingTimerMs = totalTimerMs;
+            updateTimerDisplay();
+        }
+
+        function startTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+            
+            timerInterval = setInterval(() => {
+                remainingTimerMs -= 1000;
+                updateTimerDisplay();
+                
+                if (remainingTimerMs <= 0) {
+                    stopReading();
+                    alert('⏰ 설정된 훈련 시간이 완료되었습니다!');
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            if (isReading && totalTimerMs > 0) {
+                // 훈련 중일 때는 남은 시간 표시
+                const remainingMinutes = Math.floor(remainingTimerMs / 60000);
+                const remainingSeconds = Math.floor((remainingTimerMs % 60000) / 1000);
+                timerDisplay.textContent = `${remainingMinutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            } else {
+                // 설정된 시간 표시
+                timerDisplay.textContent = `${settings.timerMinutes.toString().padStart(2, '0')}:${settings.timerSeconds.toString().padStart(2, '0')}`;
+            }
+        }
+
+        // 초기 스타일 적용
+        loadLibraryFromStorage();
+        loadSettings();
+        updateFontFamily();
+        updateFontSize();
+        updateTextColor();
+        updateBgColor();
+        updateTimerDisplay();
+        updateFocusButtons();
+        populateLibrary();
+        
+        // 페이지 로드시 샘플 텍스트 자동 로딩
+        if (textLibrary.length > 0) {
+            loadText(textLibrary[0].content, textLibrary[0].name);
+        }
+    </script>
+</body>
+</html>
